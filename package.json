@@ -1,0 +1,15 @@
+{
+  "name": "rally_chrome_ext",
+  "version": "1.0.0",
+  "description": "A set of tools for QOL in sdvi rally.",
+  "main": "index.js",
+  "dependencies": {
+    "json-formatter-js": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "npm run rest"
+  },
+  "author": "John_Schmidt@discovery.com",
+  "license": "GPL-2.0"
+}
