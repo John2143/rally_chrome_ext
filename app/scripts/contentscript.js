@@ -25,7 +25,6 @@ const GET = url => {
 };
 
 let formatted = []
-let debugdone = false
 function fixExpandable(){
     let elems = document.getElementsByTagName("sdvi-metadata-details");
     for(let elem of elems){
@@ -64,7 +63,7 @@ function fixExpandable(){
 
             elem.innerHTML = ""
             elem.appendChild(formatter.render())
-            par.style = "font-size: 150%; white-space: nowrap;"
+            par.style = "font-size: 100%; white-space: nowrap;"
         });
     }
 }
