@@ -8,12 +8,15 @@ console.log("Loaded on page");
 // Polyfill Iterator for HTML Elements
 HTMLCollection.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
 
+let cache = [];
 const GET = url => {
-    return new Promise((resolve, reject) => {
+    if(cache[url]) return cache[url];
+    console.log("req");
+    return cache[url] = new Promise((resolve, reject) => {
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                resolve(xttp.responseText);
+                resolve(xhttp.responseText);
             }
         };
         xhttp.open("GET", url);
@@ -21,24 +24,48 @@ const GET = url => {
     });
 };
 
+let formatted = []
 let debugdone = false
-async function fixExpandable(){
-    console.log("fixing..");
+function fixExpandable(){
     let elems = document.getElementsByTagName("sdvi-metadata-details");
     for(let elem of elems){
 
         let parentElem = elem
         while(parentElem.tagName !== "LI") parentElem = parentElem.parentElement;
         const movieID = parentElem.id;
+
+        if(formatted.includes(movieID)) continue;
+        formatted.push(movieID);
+
         let req = `${window.location.origin}/api/v2/movies/${movieID}/metadata`;
-        console.log(req);
-        console.log(await GET(req));
 
-        //let json = elemToJSON(elem.firstChild)
-        //let formatter = new JSONFormatter(json, 0);
-        elem.outerHTML = "cats";
+        let par = elem.parentElement
+        elem.innerHTML = "Loading";
 
-        //elem.appendChild(formatter.render())
+        GET(req).then(res => {
+            let betterNames = {
+                Workflow: "WORKFLOW_METADATA",
+                Metadata: "METADATA",
+                AnalyzeInfo: "ANALYZE_INFO",
+            }
+            let json = JSON.parse(res);
+            let json2 = {}
+            json = json.data
+                .forEach(x => json2[betterNames[x.id]] = x.attributes.metadata)
+            let formatter = new JSONFormatter(json2, 2, {
+                hoverPreviewEnabled: true,
+                hoverPreviewArrayCount: 10,
+                hoverPreviewFieldCount: 5,
+                theme: '',
+                animateOpen: false,
+                animateClose: false,
+                useToJSON: true
+            });
+
+            elem.innerHTML = ""
+            elem.appendChild(formatter.render())
+            par.style = "font-size: 150%; white-space: nowrap;"
+        });
     }
 }
 
