@@ -5,6 +5,22 @@ import JSONFormatter from "json-formatter-js"
 
 console.log("Loaded on page");
 
+const regexEnv = /:\/\/([\w-]+)\.sdvi/g
+const whereami = regexEnv.exec(window.location.origin)[1];
+
+function addColor(){
+    const bannerColorMap = {
+        "discovery": "#801717",
+        "discovery-uat": "rgb(114, 247, 31)",
+        "discovery-dev": "rgb(62, 111, 146)",
+    };
+    let toolbars = document.getElementsByClassName("v-toolbar__content");
+    for(let i = 0; i < toolbars.length; i++){
+        let bar = toolbars.item(i);
+        bar.style.backgroundColor = bannerColorMap[whereami];
+    }
+}
+
 // Polyfill Iterator for HTML Elements
 HTMLCollection.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
 
@@ -69,3 +85,4 @@ function fixExpandable(){
 }
 
 setInterval(fixExpandable, 1000);
+setInterval(addColor, 1000);
